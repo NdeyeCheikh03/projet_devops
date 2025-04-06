@@ -1,39 +1,55 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    DOCKER_COMPOSE_PATH = "./docker-compose.yml"
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        git 'https://github.com/NdeyeCheikh03/projet_devops.git'
-      }
+    environment {
+        PROJECT_NAME = "projet_devops"
     }
 
-    stage('Build Docker Images') {
-      steps {
-        sh 'docker-compose build'
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Utiliser la branche main
+                git url: 'https://github.com/NdeyeCheikh03/projet_devops.git', branch: 'main'
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                echo "🔧 Build des images Docker..."
+                sh 'docker-compose build'
+            }
+        }
+
+        stage('Run Containers') {
+            steps {
+                echo "🚀 Lancement des conteneurs..."
+                sh 'docker-compose up -d'
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                echo "🧪 Ici, vous pouvez exécuter des tests unitaires ou e2e"
+                // Exemple : Laravel tests
+                // sh 'docker exec projet_devops-backend-1 php artisan test'
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                echo "🧹 Nettoyage si besoin"
+                // Tu peux arrêter les conteneurs ici si ce n'est pas pour un env permanent
+                // sh 'docker-compose down'
+            }
+        }
     }
 
-    stage('Run Containers') {
-      steps {
-        sh 'docker-compose up -d'
-      }
+    post {
+        success {
+            echo '✅ Déploiement terminé avec succès !'
+        }
+        failure {
+            echo '❌ Une erreur est survenue pendant le pipeline.'
+        }
     }
-
-    stage('Tests') {
-      steps {
-        echo '⚙️ (Facultatif) Tu peux ajouter des tests ici'
-      }
-    }
-
-    stage('Cleanup') {
-      steps {
-        echo '🧹 Tu peux faire docker-compose down ici si tu veux tout arrêter'
-      }
-    }
-  }
 }
