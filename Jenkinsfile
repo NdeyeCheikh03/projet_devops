@@ -8,7 +8,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Utiliser la branche main
                 git url: 'https://github.com/NdeyeCheikh03/projet_devops.git', branch: 'main'
             }
         }
@@ -16,40 +15,39 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo "🔧 Build des images Docker..."
-                sh 'docker-compose build'
+                bat 'docker-compose build'
             }
         }
 
         stage('Run Containers') {
             steps {
                 echo "🚀 Lancement des conteneurs..."
-                sh 'docker-compose up -d'
+                bat 'docker-compose up -d'
             }
         }
 
         stage('Tests') {
             steps {
-                echo "🧪 Ici, vous pouvez exécuter des tests unitaires ou e2e"
-                // Exemple : Laravel tests
-                // sh 'docker exec projet_devops-backend-1 php artisan test'
+                echo "🧪 Tests"
+                // Exemple : pour Laravel
+                // bat 'docker exec projet_devops-backend-1 php artisan test'
             }
         }
 
         stage('Cleanup') {
             steps {
-                echo "🧹 Nettoyage si besoin"
-                // Tu peux arrêter les conteneurs ici si ce n'est pas pour un env permanent
-                // sh 'docker-compose down'
+                echo "🧹 Nettoyage"
+                // bat 'docker-compose down'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Déploiement terminé avec succès !'
+            echo '✅ Déploiement réussi !'
         }
         failure {
-            echo '❌ Une erreur est survenue pendant le pipeline.'
+            echo '❌ Une erreur est survenue.'
         }
     }
 }
